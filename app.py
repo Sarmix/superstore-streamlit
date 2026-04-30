@@ -50,8 +50,8 @@ dff = df[
     df["Segment"].isin(sel_segs)
 ].copy()
 
-total_sales  = dff["Ventas"].sum()
-total_profit = dff["Ganancia"].sum()
+total_sales  = dff["Sales"].sum()
+total_profit = dff["Profit"].sum()
 margen = (total_profit / total_sales * 100) if total_sales > 0 else 0
 
 with st.sidebar:
@@ -59,7 +59,7 @@ with st.sidebar:
     st.metric("Órdenes",  f"{len(dff):,}")
     st.metric("Ventas",   f"${total_sales:,.0f}")
     st.metric("Ganancia",   f"${total_profit:,.0f}")
-    st.metric("Margen",   f"{margen:.1f}%")
+    st.metric("Margin",   f"{margen:.1f}%")
 
 # ── Header ─────────────────────────────────────────────────────────────────────
 st.title("🛒 Superstore Sales — Dashboard")
@@ -69,7 +69,7 @@ c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("Órdenes",    f"{len(dff):,}")
 c2.metric("Ventas",     f"${total_sales/1e6:.2f}M")
 c3.metric("Ganancia",     f"${total_profit/1e3:.1f}K")
-c4.metric("Margen",     f"{margen:.1f}%")
+c4.metric("Margin",     f"{margen:.1f}%")
 c5.metric("Categorías", f"{dff['Category'].nunique()}")
 
 st.markdown("---")
@@ -83,15 +83,15 @@ cat_df = (
     dff.groupby("Category", as_index=False)
     .agg(Sales=("Ventas","sum"), Profit=("Ganancia","sum"))
 )
-cat_df["Margen"] = cat_df["Ganancia"] / cat_df["Ventas"] * 100
+cat_df["Margin"] = cat_df["Profit"] / cat_df["Sales"] * 100
 
 col1, col2 = st.columns(2)
 
 with col1:
     fig = go.Figure()
-    fig.add_bar(name="Ventas", x=cat_df["Category"], y=cat_df["Ventas"],
+    fig.add_bar(name="Ventas", x=cat_df["Category"], y=cat_df["Sales"],
                 marker_color=BLUE, opacity=0.85)
-    fig.add_bar(name="Ganancia", x=cat_df["Category"], y=cat_df["Ganancia"],
+    fig.add_bar(name="Ganancia", x=cat_df["Category"], y=cat_df["Profit"],
                 marker_color=GREEN, opacity=0.85)
     fig.update_layout(
         barmode="group", plot_bgcolor="white",
@@ -104,12 +104,12 @@ with col1:
 
 with col2:
     fig2 = px.bar(
-        cat_df.sort_values("Margen"),
-        x="Margen", y="Category", orientation="h",
-        color="Margen",
+        cat_df.sort_values("Margin"),
+        x="Margin", y="Category", orientation="h",
+        color="Margin",
         color_continuous_scale=["#E24B4A", "#FAE8C0", "#1D9E75"],
         color_continuous_midpoint=10,
-        text=cat_df.sort_values("Margen")["Margen"].apply(lambda v: f"{v:.1f}%"),
+        text=cat_df.sort_values("Margin")["Margin"].apply(lambda v: f"{v:.1f}%"),
     )
     fig2.update_traces(textposition="outside")
     fig2.update_layout(
@@ -137,7 +137,7 @@ fig3 = px.bar(
     color="Ganancia",
     color_continuous_scale=["#E24B4A", "#FAE8C0", "#1D9E75"],
     color_continuous_midpoint=0,
-    text=sub_df["Ganancia"].apply(lambda v: f"${v:,.0f}"),
+    text=sub_df["Profit"].apply(lambda v: f"${v:,.0f}"),
 )
 fig3.update_traces(textposition="outside")
 fig3.update_layout(
@@ -169,7 +169,7 @@ with col3:
         color="avg_profit",
         color_continuous_scale=["#E24B4A", "#FAE8C0", "#1D9E75"],
         color_continuous_midpoint=0,
-        text=disc_df["Ganancia prom"].apply(lambda v: f"${v:,.0f}"),
+        text=disc_df["avg_profit"].apply(lambda v: f"${v:,.0f}"),
     )
     fig4.update_traces(textposition="outside")
     fig4.update_layout(
@@ -218,7 +218,7 @@ time_df["IsNov"] = time_df["Month"].str.endswith("-11")
 
 fig6 = go.Figure()
 fig6.add_trace(go.Scatter(
-    x=time_df["Month"], y=time_df["Ventas"],
+    x=time_df["Month"], y=time_df["Sales"],
     fill="tozeroy", fillcolor="rgba(55,138,221,0.10)",
     line=dict(color=BLUE, width=2),
     name="Ventas mensuales",
@@ -242,7 +242,7 @@ yr_df = (
     dff.groupby("Year", as_index=False)
     .agg(Sales=("Ventas","sum"))
 )
-yr_df["Crecimiento"] = yr_df["Ventas"].pct_change() * 100
+yr_df["Growth"] = yr_df["Sales"].pct_change() * 100
 
 col5, col6 = st.columns(2)
 with col5:
@@ -250,7 +250,7 @@ with col5:
         yr_df, x="Year", y="Ventas",
         color="Ventas",
         color_continuous_scale=["#B5D4F4", "#185FA5"],
-        text=yr_df["Ventas"].apply(lambda v: f"${v/1e3:.0f}K"),
+        text=yr_df["Sales"].apply(lambda v: f"${v/1e3:.0f}K"),
     )
     fig7.update_traces(textposition="outside")
     fig7.update_layout(
@@ -290,7 +290,7 @@ reg_df = (
     dff.groupby("Region", as_index=False)
     .agg(Sales=("Ventas","sum"), Profit=("Ganancia","sum"))
 )
-reg_df["Margen"] = reg_df["Ganancia"] / reg_df["Ventas"] * 100
+reg_df["Margin"] = reg_df["Profit"] / reg_df["Sales"] * 100
 
 col7, col8, col9 = st.columns(3)
 
@@ -305,12 +305,12 @@ with col7:
     st.plotly_chart(fig9, use_container_width=True, config={"displayModeBar": False}, key="h5a")
 
 with col8:
-    reg_long = reg_df.melt(id_vars="Region", value_vars=["Ventas","Ganancia"],
+    reg_long = reg_df.melt(id_vars="Region", value_vars=["Sales","Profit"],
                            var_name="Métrica", value_name="Valor")
     fig10 = px.bar(
         reg_long, x="Region", y="Valor", color="Métrica",
         barmode="group",
-        color_discrete_map={"Ventas": BLUE, "Ganancia": GREEN},
+        color_discrete_map={"Sales": BLUE, "Profit": GREEN},
     )
     fig10.update_layout(
         plot_bgcolor="white", legend_title=None,
@@ -322,12 +322,12 @@ with col8:
 
 with col9:
     fig11 = px.bar(
-        reg_df.sort_values("Margen"),
-        x="Margen", y="Region", orientation="h",
-        color="Margen",
+        reg_df.sort_values("Margin"),
+        x="Margin", y="Region", orientation="h",
+        color="Margin",
         color_continuous_scale=["#E24B4A", "#FAE8C0", "#1D9E75"],
         color_continuous_midpoint=12,
-        text=reg_df.sort_values("Margen")["Margen"].apply(lambda v: f"{v:.1f}%"),
+        text=reg_df.sort_values("Margin")["Margin"].apply(lambda v: f"{v:.1f}%"),
     )
     fig11.update_traces(textposition="outside")
     fig11.update_layout(
