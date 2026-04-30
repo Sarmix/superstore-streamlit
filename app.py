@@ -81,7 +81,7 @@ st.subheader("H1 · Furniture vende casi tanto como Technology pero su margen es
 
 cat_df = (
     dff.groupby("Category", as_index=False)
-    .agg(Sales=("Ventas","sum"), Profit=("Ganancia","sum"))
+    .agg(Sales=("Sales","sum"), Profit=("Profit","sum"))
 )
 cat_df["Margin"] = cat_df["Profit"] / cat_df["Sales"] * 100
 
@@ -129,12 +129,12 @@ st.subheader("H2 · Tables, Bookcases y Supplies se venden a pérdida neta")
 
 sub_df = (
     dff.groupby("Sub-Categoría", as_index=False)
-    .agg(Profit=("Ganancia","sum"))
-    .sort_values("Ganancia")
+    .agg(Profit=("Profit","sum"))
+    .sort_values("Profit")
 )
 fig3 = px.bar(
-    sub_df, x="Ganancia", y="Sub-Categoría", orientation="h",
-    color="Ganancia",
+    sub_df, x="Profit", y="Sub-Category", orientation="h",
+    color="Profit",
     color_continuous_scale=["#E24B4A", "#FAE8C0", "#1D9E75"],
     color_continuous_midpoint=0,
     text=sub_df["Profit"].apply(lambda v: f"${v:,.0f}"),
@@ -161,7 +161,7 @@ col3, col4 = st.columns(2)
 with col3:
     disc_df = (
         dff.groupby("Disc Bucket", observed=True)
-        .agg(avg_profit=("Ganancia","mean"), n=("Ganancia","count"))
+        .agg(avg_profit=("Profit","mean"), n=("Profit","count"))
         .reset_index()
     )
     fig4 = px.bar(
@@ -184,7 +184,7 @@ with col3:
 with col4:
     samp = dff.sample(min(1200, len(dff)), random_state=42)
     fig5 = px.scatter(
-        samp, x="Discount", y="Ganancia", color="Categoría",
+        samp, x="Discount", y="Profit", color="Category",
         color_discrete_map={"Muebles": AMBER, "Útiles de Oficina": BLUE, "Tecnología": GREEN},
         opacity=0.45,
     )
@@ -211,7 +211,7 @@ st.subheader("H4 · Las ventas crecen +51% en 4 años con pico estacional cada n
 
 time_df = (
     dff.groupby("Month", as_index=False)
-    .agg(Sales=("Ventas","sum"))
+    .agg(Sales=("Sales","sum"))
     .sort_values("Month")
 )
 time_df["IsNov"] = time_df["Month"].str.endswith("-11")
@@ -225,7 +225,7 @@ fig6.add_trace(go.Scatter(
 ))
 nov = time_df[time_df["IsNov"]]
 fig6.add_trace(go.Scatter(
-    x=nov["Month"], y=nov["Ventas"],
+    x=nov["Month"], y=nov["Sales"],
     mode="markers", marker=dict(color=RED, size=10, symbol="circle"),
     name="Pico noviembre",
 ))
@@ -240,15 +240,15 @@ st.plotly_chart(fig6, use_container_width=True, config={"displayModeBar": False}
 
 yr_df = (
     dff.groupby("Year", as_index=False)
-    .agg(Sales=("Ventas","sum"))
+    .agg(Sales=("Sales","sum"))
 )
 yr_df["Growth"] = yr_df["Sales"].pct_change() * 100
 
 col5, col6 = st.columns(2)
 with col5:
     fig7 = px.bar(
-        yr_df, x="Year", y="Ventas",
-        color="Ventas",
+        yr_df, x="Year", y="Sales",
+        color="Sales",
         color_continuous_scale=["#B5D4F4", "#185FA5"],
         text=yr_df["Sales"].apply(lambda v: f"${v/1e3:.0f}K"),
     )
@@ -288,7 +288,7 @@ st.subheader("H5 · West lidera en rentabilidad — Central factura mucho pero g
 
 reg_df = (
     dff.groupby("Region", as_index=False)
-    .agg(Sales=("Ventas","sum"), Profit=("Ganancia","sum"))
+    .agg(Sales=("Sales","sum"), Profit=("Profit","sum"))
 )
 reg_df["Margin"] = reg_df["Profit"] / reg_df["Sales"] * 100
 
@@ -296,7 +296,7 @@ col7, col8, col9 = st.columns(3)
 
 with col7:
     fig9 = px.pie(
-        reg_df, values="Ventas", names="Región",
+        reg_df, values="Sales", names="Region",
         color="Region", color_discrete_map={"Oeste": GREEN, "Este": BLUE, "Central": RED, "Sur": AMBER},
         hole=0.42, title="Composición de ventas por Región",
     )
