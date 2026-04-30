@@ -128,7 +128,7 @@ st.markdown("---")
 st.subheader("H2 · Tables, Bookcases y Supplies se venden a pérdida neta")
 
 sub_df = (
-    dff.groupby("Sub-Categoría", as_index=False)
+    dff.groupby("Sub-Category", as_index=False)
     .agg(Profit=("Profit","sum"))
     .sort_values("Profit")
 )
@@ -185,7 +185,8 @@ with col4:
     samp = dff.sample(min(1200, len(dff)), random_state=42)
     fig5 = px.scatter(
         samp, x="Discount", y="Profit", color="Category",
-        color_discrete_map={"Muebles": AMBER, "Útiles de Oficina": BLUE, "Tecnología": GREEN},
+        color_discrete_map={"Furniture": AMBER, "Office Supplies": BLUE, "Technology": GREEN},
+        labels={"Category":"Categoría","Profit":"Ganancia","Discount":"Descuento"},
         opacity=0.45,
     )
     fig5.update_layout(
@@ -297,7 +298,8 @@ col7, col8, col9 = st.columns(3)
 with col7:
     fig9 = px.pie(
         reg_df, values="Sales", names="Region",
-        color="Region", color_discrete_map={"Oeste": GREEN, "Este": BLUE, "Central": RED, "Sur": AMBER},
+        color="Region", color_discrete_map={"West": GREEN, "East": BLUE, "Central": RED, "South": AMBER},
+        labels={"Region":"Región","Sales":"Ventas"},
         hole=0.42, title="Composición de ventas por Región",
     )
     fig9.update_traces(textinfo="percent+label", textposition="outside")
@@ -311,6 +313,7 @@ with col8:
         reg_long, x="Region", y="Valor", color="Métrica",
         barmode="group",
         color_discrete_map={"Sales": BLUE, "Profit": GREEN},
+        labels={"Métrica":"","Valor":"USD","Region":"Región","Sales":"Ventas","Profit":"Ganancia"},
     )
     fig10.update_layout(
         plot_bgcolor="white", legend_title=None,
