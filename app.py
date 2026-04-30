@@ -94,11 +94,10 @@ with col1:
     fig.add_bar(name="Profit", x=cat_df["Category"], y=cat_df["Profit"],
                 marker_color=GREEN, opacity=0.85)
     fig.update_layout(
-        title="Ventas vs Profit por Categoría ($)",
         barmode="group", plot_bgcolor="white",
         xaxis_title=None, yaxis_tickprefix="$",
         yaxis_gridcolor="#f0f0f0",
-        legend=dict(orientation="h", y=1.12),
+        legend=dict(orientation="h", y=-0.2, x=0.0),
         margin=dict(t=60, b=20),
     )
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False}, key="h1a")
@@ -111,7 +110,6 @@ with col2:
         color_continuous_scale=["#E24B4A", "#FAE8C0", "#1D9E75"],
         color_continuous_midpoint=10,
         text=cat_df.sort_values("Margin")["Margin"].apply(lambda v: f"{v:.1f}%"),
-        title="Margen de ganancia por Categoría (%)",
     )
     fig2.update_traces(textposition="outside")
     fig2.update_layout(
@@ -140,7 +138,6 @@ fig3 = px.bar(
     color_continuous_scale=["#E24B4A", "#FAE8C0", "#1D9E75"],
     color_continuous_midpoint=0,
     text=sub_df["Profit"].apply(lambda v: f"${v:,.0f}"),
-    title="Profit total por Sub-Categoría",
 )
 fig3.update_traces(textposition="outside")
 fig3.update_layout(
@@ -173,7 +170,6 @@ with col3:
         color_continuous_scale=["#E24B4A", "#FAE8C0", "#1D9E75"],
         color_continuous_midpoint=0,
         text=disc_df["avg_profit"].apply(lambda v: f"${v:,.0f}"),
-        title="Profit promedio por nivel de descuento",
     )
     fig4.update_traces(textposition="outside")
     fig4.update_layout(
@@ -191,7 +187,6 @@ with col4:
         samp, x="Discount", y="Profit", color="Category",
         color_discrete_map=CAT,
         opacity=0.45,
-        title="Scatter: Descuento vs Profit por Categoría",
     )
     fig5.update_layout(
         plot_bgcolor="white",
@@ -199,7 +194,7 @@ with col4:
         xaxis_gridcolor="#f0f0f0",
         yaxis_title="Profit ($)", yaxis_tickprefix="$",
         yaxis_gridcolor="#f0f0f0",
-        legend=dict(orientation="h", y=1.12),
+        legend=dict(orientation="h", y=-0.2, x=0.0),
         margin=dict(t=60, b=20),
     )
     fig5.add_vline(x=0.20, line_width=1.5, line_color=RED, line_dash="dash",
@@ -235,11 +230,10 @@ fig6.add_trace(go.Scatter(
     name="Pico noviembre",
 ))
 fig6.update_layout(
-    title="Evolución mensual de Ventas (2014–2017)",
     plot_bgcolor="white",
     xaxis_title=None, xaxis_tickangle=45, xaxis_gridcolor="#f0f0f0",
     yaxis_title="Ventas ($)", yaxis_tickprefix="$", yaxis_gridcolor="#f0f0f0",
-    legend=dict(orientation="h", y=1.12),
+    legend=dict(orientation="h", y=-0.2, x=0.0),
     margin=dict(t=60, b=60),
 )
 st.plotly_chart(fig6, use_container_width=True, config={"displayModeBar": False}, key="h4a")
@@ -257,7 +251,6 @@ with col5:
         color="Sales",
         color_continuous_scale=["#B5D4F4", "#185FA5"],
         text=yr_df["Sales"].apply(lambda v: f"${v/1e3:.0f}K"),
-        title="Ventas anuales totales",
     )
     fig7.update_traces(textposition="outside")
     fig7.update_layout(
@@ -275,7 +268,6 @@ with col6:
         color_continuous_scale=["#E24B4A", "#FAE8C0", "#1D9E75"],
         color_continuous_midpoint=0,
         text=yr_g["Growth"].apply(lambda v: f"{v:.1f}%"),
-        title="Crecimiento anual de ventas (%)",
     )
     fig8.update_traces(textposition="outside")
     fig8.update_layout(
@@ -319,11 +311,10 @@ with col8:
         reg_long, x="Region", y="Valor", color="Metrica",
         barmode="group",
         color_discrete_map={"Sales": BLUE, "Profit": GREEN},
-        title="Ventas vs Profit por Región",
     )
     fig10.update_layout(
         plot_bgcolor="white", legend_title=None,
-        legend=dict(orientation="h", y=1.12),
+        legend=dict(orientation="h", y=-0.2, x=0.0),
         xaxis_title=None, yaxis_tickprefix="$", yaxis_gridcolor="#f0f0f0",
         margin=dict(t=60, b=20),
     )
@@ -337,7 +328,6 @@ with col9:
         color_continuous_scale=["#E24B4A", "#FAE8C0", "#1D9E75"],
         color_continuous_midpoint=12,
         text=reg_df.sort_values("Margin")["Margin"].apply(lambda v: f"{v:.1f}%"),
-        title="Margen de ganancia por Región",
     )
     fig11.update_traces(textposition="outside")
     fig11.update_layout(
